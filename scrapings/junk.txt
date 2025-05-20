@@ -1,0 +1,2 @@
+This is a useless junk file created to allow git to track this directory when it is empty.
+Feel free to delete it.

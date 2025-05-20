@@ -1,0 +1,22 @@
+test.py
+backup.py
+
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environment
+.venv/
+
+# IDE settings
+.idea/
+
+# OS files
+.DS_Store
+
+# Environment variables
+.env
+
+# VSCode settings
+.vscode/
