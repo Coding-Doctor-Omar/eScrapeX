@@ -28,7 +28,7 @@ For inquiries, please contact me at codingdromar@outlook.com
 7. You can then use Pandas or whichever data analysis tool you prefer to do your analysis!
 8. Throughout the scraping process, live progress and estimated live scraping speed in products/s is displayed.
 
-_Note: Make sure you have a good internet connection when using this scraper._
+_Note: Make sure you have a good internet connection when using this scraper. DO NOT delete the 'scrapings' subdirectory._
 
 
 # WARNINGS AND DISCLAIMERS
