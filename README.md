@@ -4,6 +4,12 @@
 3. Now you are ready to go! Run 'main.py' to launch the app.
 
 # Features
+## License
+
+This project is licensed under a proprietary license.  
+You may not copy, modify, or redistribute this code without my explicit written permission.  
+For inquiries, please contact me at codingdromar@outlook.com
+
 ### This scraper is a demo. It currently contains only 3 categories; however, the code is organized and easily scalable to include the entire eBay website.
 
 1. This scraper works on the international eBay website (ebay.com).
