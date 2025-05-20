@@ -5,6 +5,7 @@
 
 # Features
 ## License
+🛡️ License: Proprietary (All rights reserved)
 
 This project is licensed under a proprietary license.  
 You may not copy, modify, or redistribute this code without my explicit written permission.  
