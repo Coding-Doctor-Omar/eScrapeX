@@ -87,6 +87,9 @@ class eBayScraper:
 
         # Begin (you can change the first while loop to a 'for _ in range(1)' if you want to undergo quick testing).
         while True:
+            # We assume the page is working fine by default
+            self.current_page_failed = False
+
             # List of products in this page only
             page_products = []
 
@@ -99,8 +102,6 @@ class eBayScraper:
             # Capture Item Cards of the Page
             retries = 0
             while True:
-                # We assume the page is working fine by default
-                self.current_page_failed = False
 
                 try:
                     products_section = WebDriverWait(driver, 15).until(
