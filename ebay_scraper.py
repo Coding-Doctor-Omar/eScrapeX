@@ -86,7 +86,7 @@ class eBayScraper:
         start_time = time.time()
 
         # Begin (you can change the first while loop to a 'for _ in range(1)' if you want to undergo quick testing).
-        for _ in range(3):
+        while True:
             # List of products in this page only
             page_products = []
 
