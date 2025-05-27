@@ -1,6 +1,8 @@
+import sys
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import TimeoutException, StaleElementReferenceException
+from selenium.common.exceptions import TimeoutException, StaleElementReferenceException, NoSuchElementException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from art import logo
@@ -32,6 +34,7 @@ class eBayScraper:
     def __init__(self):
         self.products = []
         self.data = {}
+        self.current_page_failed = False
 
     def show_scrape_status(self, state, product_count=0.0, speed=0.0):
         progress = round(product_count / 10020 * 100)
@@ -51,8 +54,12 @@ class eBayScraper:
             print(logo)
             print("GOING TO THE NEXT LISTINGS PAGE...\n")
             print(f"Scraped a total of {product_count}/10020 products. [{progress}% COMPLETE]")
+        elif state == "page_failed":
+            print(logo)
+            print("Possible CAPTCHA detected. All scrapings of this page will be discarded. Attempting to retry page...\n")
+            print(f"Scraped a total of {product_count}/10020 products. [{progress}% COMPLETE]")
         else:
-            raise ValueError(f"Invalid state argument. Expected 'scraping', 'finished_scraping', or 'finished_csv' but got '{state}' instead.")
+            raise ValueError(f"Invalid state argument. Expected 'scraping', 'finished_scraping', 'finished_csv', 'next_page', or 'page_failed' but got '{state}' instead.")
 
 
     def scrape_products(self, category):
@@ -79,7 +86,10 @@ class eBayScraper:
         start_time = time.time()
 
         # Begin (you can change the first while loop to a 'for _ in range(1)' if you want to undergo quick testing).
-        while True:
+        for _ in range(3):
+            # List of products in this page only
+            page_products = []
+
             # Make a time stamp
             start_time = time.time()
 
@@ -89,6 +99,9 @@ class eBayScraper:
             # Capture Item Cards of the Page
             retries = 0
             while True:
+                # We assume the page is working fine by default
+                self.current_page_failed = False
+
                 try:
                     products_section = WebDriverWait(driver, 15).until(
                         EC.presence_of_element_located((By.CSS_SELECTOR, "ul.brwrvr__item-results--list"))
@@ -118,14 +131,26 @@ class eBayScraper:
                 driver.execute_script("window.scrollBy(0, 100);")
 
                 # Get product title, category, and brand
-                title = product_card.find_element(By.CSS_SELECTOR, value=".bsig__title__text").text.strip()
+                try:
+                    title = product_card.find_element(By.CSS_SELECTOR, value=".bsig__title__text").text.strip()
+                except NoSuchElementException:
+                    self.current_page_failed = True
+                    break
 
                 title = re.sub(r'[^\x00-\x7F]+', '', title)
 
-                product_category = driver.find_element(By.CSS_SELECTOR, value="h1.page-title").text.strip()
+                try:
+                    product_category = driver.find_element(By.CSS_SELECTOR, value="h1.page-title").text.strip()
+                except NoSuchElementException:
+                    self.current_page_failed = True
+                    break
 
-                brand_area = product_card.find_element(By.CSS_SELECTOR,
-                                                       value="div.bsig.brw-signal.bsig--subheader").text
+                try:
+                    brand_area = product_card.find_element(By.CSS_SELECTOR,
+                                                           value=".bsig--subheader").text
+                except NoSuchElementException:
+                    self.current_page_failed = True
+                    break
 
                 if " · " in brand_area:
                     brand = brand_area.split(" · ")[1].strip()
@@ -136,8 +161,12 @@ class eBayScraper:
                         brand = brand_area.strip()
 
                 # Get product min and max prices
-                price_text = product_card.find_element(By.CSS_SELECTOR,
-                                                       value="span.bsig__price--displayprice").text.strip()
+                try:
+                    price_text = product_card.find_element(By.CSS_SELECTOR,
+                                                           value="span.bsig__price--displayprice").text.strip()
+                except NoSuchElementException:
+                    self.current_page_failed = True
+                    break
 
                 if "to" in price_text:
                     min_price = float(price_text.split("to")[0].strip().replace("$", "").replace(",", ""))
@@ -147,15 +176,24 @@ class eBayScraper:
                     max_price = min_price
 
                 # Get product link
-                product_link = product_card.find_element(By.CSS_SELECTOR, value=".bsig__title a").get_attribute("href")
+                try:
+                    product_link = product_card.find_element(By.CSS_SELECTOR, value=".bsig__title a").get_attribute("href")
+                except NoSuchElementException:
+                    self.current_page_failed = True
+                    break
 
                 # Get product image links
-                image_elements = product_card.find_elements(By.CSS_SELECTOR, value="img.brwrvr__item-card__image")
+                try:
+                    image_elements = product_card.find_elements(By.CSS_SELECTOR, value="img.brwrvr__item-card__image")
+                except NoSuchElementException:
+                    self.current_page_failed = True
+                    break
+
                 image_links = [element.get_attribute("data-originalsrc") for element in image_elements]
                 image_links = " ".join(image_links)
 
                 # Add product to the products list
-                self.products.append(
+                page_products.append(
                     {
                         "title": title,
                         "category": product_category,
@@ -170,8 +208,17 @@ class eBayScraper:
                 # Calculate and display scraping speed
                 elapsed_time = time.time() - start_time
                 speed = round(1 / elapsed_time, 2)
-                self.show_scrape_status(product_count=len(self.products), speed=speed, state="scraping")
+                self.show_scrape_status(product_count=len(self.products) + len(page_products), speed=speed, state="scraping")
 
+            # Add page products list to full products list
+            if self.current_page_failed:
+                self.show_scrape_status(state="page_failed")
+                time.sleep(5)
+                driver.get(current_url)
+                continue
+            else:
+                for product in page_products:
+                    self.products.append(product)
 
             # Periodically restart the webdriver
             current_page += 1

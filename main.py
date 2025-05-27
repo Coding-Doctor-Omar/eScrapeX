@@ -75,4 +75,13 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        clear_screen()
+        print(logo)
+        print(f"An Unexpected Error Has Occurred.")
+        print(f"Please notify the owner at codingdromar@outlook.com; thank you.\n")
+        print(f"Error Details:\n{e}\n")
+        input("Press ENTER to exit.")
+        sys.exit(0)
