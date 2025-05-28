@@ -1,5 +1,6 @@
 test.py
 backup.py
+*.csv
 
 # Python bytecode
 __pycache__/

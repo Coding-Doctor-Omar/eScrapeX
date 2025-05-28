@@ -83,7 +83,6 @@ class eBayScraper:
 
         # Final preparation phase
         current_page = 1
-        start_time = time.time()
 
         # Begin (you can change the first while loop to a 'for _ in range(1)' if you want to undergo quick testing).
         while True:
@@ -92,9 +91,6 @@ class eBayScraper:
 
             # List of products in this page only
             page_products = []
-
-            # Make a time stamp
-            start_time = time.time()
 
             # Get current page url
             current_url = driver.current_url
