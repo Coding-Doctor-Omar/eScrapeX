@@ -1,15 +1,14 @@
-import sys
-
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException, StaleElementReferenceException, NoSuchElementException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from art import logo
+import pandas as pd
 import time
 import re
 import os
-import pandas as pd
+import sys
 
 urls = {
     "phones": "https://www.ebay.com/b/Cell-Phones-Smartphones/9355/bn_320094",
