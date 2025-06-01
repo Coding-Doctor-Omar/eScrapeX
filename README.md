@@ -26,7 +26,7 @@ For inquiries, please contact me at codingdromar@outlook.com
 5. The scraper will then clean full product duplicates, not subset duplicates.
 6. Finally, the dataset will be placed in a csv file inside the 'scrapings' subdirectory.
 7. You can then use Pandas or whichever data analysis tool you prefer to do your analysis!
-8. Throughout the scraping process, live progress and estimated live scraping speed in products/s is displayed.
+8. Throughout the scraping process, live progress and estimated live scraping speed in products/s are displayed.
 
 _Note: Make sure you have a good internet connection when using this scraper. DO NOT delete the 'scrapings' subdirectory._
 
