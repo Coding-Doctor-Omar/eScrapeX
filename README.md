@@ -1,3 +1,9 @@
+# No Longer Maintained
+This project is no longer maintained. In the future, a better eBay web scraper will hopefully be available.
+
+Ebay has updated its anti-scraping measures, rendering this scraper ineffective. This scraper relied on standard Selenium, which is ineffective against the new anti-scraping measures.
+
+
 # Setup Instructions
 1. Make sure you have the latest version of Python installed on your computer.
 2. Run 'setup.py' directly, not inside an IDE. If you run it inside an IDE like PyCharm, the scraper will only work inside the IDE, but the scraper will still not be usable directly from your computer.
